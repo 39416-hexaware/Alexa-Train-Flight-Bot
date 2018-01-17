@@ -5,9 +5,11 @@ var express = require('express');
 var Alexa = require('alexa-app');
 var SSML = require('ssml');
 var SSMLBuilder = require('ssml-builder');
+const data = require('./util/dataProcessor');
 
-var objRequestData = null;
+var objData = new data.BookTrainData();
 var objEmployeeDetails = null;
+var objRequestData = null;
 
 var port = process.env.PORT || 5000;
 //Assign port
@@ -60,50 +62,62 @@ alexaApp.intent("TrainTicketBook",
         console.log('Mubash');
         console.log(JSON.stringify(request));
 
+        let passengers = request.slots.passengers.value;
+        let boardingpoint = request.slots.boardingpoint.value;
+        let destination = request.slots.destination.value;
+        let dateoftravel = request.slots.dateoftravel.value;
+
         objSSML.say("LET ME SEE.")
             .break(200)
             .prosody({ rate: '0.8' })
             .say("COMING FROM TRAIN TICKET BOOK")
             .toString({ pretty: true });
 
+        if (passengers == undefined) {
+            objData.passengers = passengers != undefined ? passengers : "";
+            response.say("PLEASE PROVIDE NAME OF THE CITY.!")
+                .reprompt("You there?");
+        }
+        else if (boardingpoint == undefined) {
+            objData.boardingpoint = boardingpoint != undefined ? boardingpoint : "";
+            response.say("PLEASE TELL ME WHAT DETAIL YOU WANT.!")
+                .reprompt("You there?");
+        }
+        else if (destination == undefined) {
+            objData.destination = destination != undefined ? destination : "";
+            response.say("PLEASE TELL ME WHAT DETAIL YOU WANT.!")
+                .reprompt("You there?");
+        }
+        else if (dateoftravel == undefined) {
+            objData.dateoftravel = dateoftravel != undefined ? dateoftravel : "";
+            response.say("PLEASE TELL ME WHAT DETAIL YOU WANT.!")
+                .reprompt("You there?");
+        }
+        else {
+            objEmployeeDetails.Contact = contact;
+            objEmployeeDetails.City = city;
 
-        // let city = request.slots.City.value;
-        // let contact = request.slots.Contact.value;
-        // if (city == undefined) {
-        //     objEmployeeDetails.Contact = contact != undefined ? contact : "";
-        //     response.say("PLEASE PROVIDE NAME OF THE CITY.!")
-        //         .reprompt("You there?");
-        // }
-        // else if (contact == undefined) {
-        //     objEmployeeDetails.City = city != undefined ? city : "";
-        //     response.say("PLEASE TELL ME WHAT DETAIL YOU WANT.!")
-        //         .reprompt("You there?");
-        // }
-        // else {
-        //     objEmployeeDetails.Contact = contact;
-        //     objEmployeeDetails.City = city;
+            // objSSML.say("LET ME SEE.")
+            // .break(200)
+            // .prosody({ rate: '0.8' })
+            // .say("THE MANAGER FOR HDFC "+ city +" OFFICE IS MANOHAR. PLEASE NOTE DOWN HIS "+ contact +" NUMBER. 9 7 4 8 9 7 8 8 1 2.!")
+            // .toString({ pretty: true });
 
-        //     // objSSML.say("LET ME SEE.")
-        //     // .break(200)
-        //     // .prosody({ rate: '0.8' })
-        //     // .say("THE MANAGER FOR HDFC "+ city +" OFFICE IS MANOHAR. PLEASE NOTE DOWN HIS "+ contact +" NUMBER. 9 7 4 8 9 7 8 8 1 2.!")
-        //     // .toString({ pretty: true });
+            objSSMLBuilder.say("LET ME SEE.")
+                .pause('2s')
+                .say("THE MANAGER FOR HDFC " + city + " OFFICE IS MANOHAR. PLEASE NOTE DOWN HIS " + contact + " NUMBER!")
+                .sayAs({
+                    word: "9748978812",
+                    interpret: "telephone"
+                })
 
-        //     objSSMLBuilder.say("LET ME SEE.")
-        //         .pause('2s')
-        //         .say("THE MANAGER FOR HDFC " + city + " OFFICE IS MANOHAR. PLEASE NOTE DOWN HIS " + contact + " NUMBER!")
-        //         .sayAs({
-        //             word: "9748978812",
-        //             interpret: "telephone"
-        //         })
+            let speechOutput = objSSMLBuilder.ssml(true);
 
-        //     let speechOutput = objSSMLBuilder.ssml(true);
-
-        //     console.log(JSON.stringify(response.say));
-        //     response.say(speechOutput);
-        //     // response.say("LET ME SEE. THE MANAGER FOR HDFC " + city + " OFFICE IS MANOHAR. PLEASE NOTE DOWN HIS " + contact + " NUMBER. 9 7 4 8 9 7 8 8 1 2.!")
-        //     //     .reprompt("You there?");
-        // }
+            console.log(JSON.stringify(response.say));
+            response.say(speechOutput);
+            // response.say("LET ME SEE. THE MANAGER FOR HDFC " + city + " OFFICE IS MANOHAR. PLEASE NOTE DOWN HIS " + contact + " NUMBER. 9 7 4 8 9 7 8 8 1 2.!")
+            //     .reprompt("You there?");
+        }
     }
 );
 
