@@ -1,93 +1,175 @@
 'use strict';
 
-var Alexa = require("alexa-sdk");
-//IMPORT DEPENDENCIES
+//imports
+var express = require('express');
+var Alexa = require('alexa-app');
+var SSML = require('ssml');
+var SSMLBuilder = require('ssml-builder');
 
-var appId = undefined; //'amzn1.echo-sdk-ams.app.your-skill-id';
-//LEAVE THIS BLANK
+var objRequestData = null;
+var objEmployeeDetails = null;
 
+var port = process.env.PORT || 5000;
+//Assign port
 
-//-------------------------------------------AWS LAMBDA ENTRY POINT------------------------------------------------------------
-exports.handler = function(event, context, callback) {
+var app = express();
+//Create express object
 
-  // console.log("Event : "+JSON.stringify(event));
-  // console.log("Context : "+JSON.stringify(context));
-  //UNCOMMENT TO SEE REQUEST AND RESPONSE OBJECT JSONs FOR DEBUGGING PURPOSES
+var alexaApp = new Alexa.app("Alexa-Train-Flight-Bot");
+var objSSML = new SSML();
+var objSSMLBuilder = new SSMLBuilder();
 
-  var alexa = Alexa.handler(event, context);
-        alexa.registerHandlers(newSessionHandlers); //handlers contain alexa-sdk function based intent logic
-        alexa.execute();
-};//THIS IS THE CONNECTOR TO ALEXA SKILL ON DEVELOPER ALEXA PORTAL
+alexaApp.express({
+    expressApp: app,
 
-//---------------------------------------INTENT MANAGEMENT AND FUNCTIONS-------------------------------------------------------
-var newSessionHandlers = {
-    'LaunchRequest': function() {
+    // verifies requests come from amazon alexa. Must be enabled for production.
+    // You can disable this if you're running a dev environment and want to POST
+    // things to test behavior. enabled by default.
+    checkCert: false,
 
-        this.attributes['speechOutput']="Hello there! This is the launch request message. Place the default greeting message here. THis will play everytime you invoke the Alexa Skill."
-        this.attributes['repromptSpeech']="Are you there? This is the secondary waiting message prompt if you don't say anything or I don't here anything."
-        this.emit(':ask', this.attributes['speechOutput'],this.attributes['repromptSpeech']);
-    },//Launches the Trigger or executes by Invokation Word or Invokation name
-      //This is a Mandatory code component
+    // sets up a GET route when set to true. This is handy for testing in
+    // development, but not recommended for production. disabled by default
+    debug: true
+});
 
-    'TellIntent': function() {
-        this.attributes['speechOutput']="I was coded by Mubash. Yes, he is awesome. I am still incomplete though. You do it yourself now!";
-        this.emit(':tell',this.attributes['speechOutput']);
-    },//Example of Tell. Alexa does not prompt a secondary waiting message. Session Ends.
+alexaApp.launch(function (request, response) {
+    // let card = {
+    //     "version": "1.0",
+    //     "response": {
+    //       "outputSpeech": {"type":"PlainText","text":"Your Car-Fu car is on the way!"},
+    //       "card": {
+    //         "type": "Standard",
+    //         "title": "Ordering a Car",
+    //         "text": "Your ride is on the way to 123 Main Street!\nEstimated cost for this ride: $25",
+    //         "image": {
+    //           "smallImageUrl": "https://carfu.com/resources/card-images/race-car-small.png",
+    //           "largeImageUrl": "https://carfu.com/resources/card-images/race-car-large.png"
+    //         }
+    //       }
+    //     }
+    //   }
+    console.log(JSON.stringify(request));
+    response.say("HELLO THERE. I AM TRAIN FLIGHT ALEXA.!")
+        .reprompt("You there?");
+});
 
-    'AskIntent': function() {
-        this.attributes['speechOutput']="I was coded by Mubash. Yes, he is awesome. I am still incomplete though. You do it yourself now!";
-        this.attributes['repromptSpeech']="Are you there? This is the secondary waiting message prompt if you don't say anything or I don't here anything."
-        this.emit(':ask', this.attributes['speechOutput'],this.attributes['repromptSpeech']);
-    },//Example of Ask. Alexa prompts a secondary waiting message. Session Waits.
+//   alexaApp.dictionary = { "names": ["matt", "joe", "bob", "bill", "mary", "jane", "dawn"] };
 
-    'SlotIntent': function() {
-        var stateslot = this.event.request.intent.slots.testvar.value; //Observe state.value? state is the slot name you put in Training Dashboard in Developer Alexa Portal for that slot
-        this.attributes['speechOutput']=`Slot Value is ${stateslot}`;
-        this.attributes['repromptSpeech']="Are you there? This is the secondary waiting message prompt if you don't say anything or I don't here anything."
-        this.emit(':ask', this.attributes['speechOutput'],this.attributes['repromptSpeech']);
-    },//Example of How to Take Slot Values From Utterance
+alexaApp.intent("employeedetailsIntent",
+    function (request, response) {
+        // console.log(JSON.stringify(request));
+        console.log(JSON.stringify(request.slots.City.value));
+        let city = request.slots.City.value;
+        let contact = request.slots.Contact.value;
+        if (city == undefined) {
+            objEmployeeDetails.Contact = contact != undefined ? contact : "";
+            response.say("PLEASE PROVIDE NAME OF THE CITY.!")
+                .reprompt("You there?");
+        }
+        else if (contact == undefined) {
+            objEmployeeDetails.City = city != undefined ? city : "";
+            response.say("PLEASE TELL ME WHAT DETAIL YOU WANT.!")
+                .reprompt("You there?");
+        }
+        else {
+            objEmployeeDetails.Contact = contact;
+            objEmployeeDetails.City = city;
 
-    'CardTellIntent': function() {
-        var cardTitle = 'Card Title';
-        var cardContent = 'Card Summary Content';
-        this.attributes['speechOutput']="Speech Output Message";
-        this.emit(':tellWithCard',this.attributes['speechOutput'], cardTitle, cardContent);
+            // objSSML.say("LET ME SEE.")
+            // .break(200)
+            // .prosody({ rate: '0.8' })
+            // .say("THE MANAGER FOR HDFC "+ city +" OFFICE IS MANOHAR. PLEASE NOTE DOWN HIS "+ contact +" NUMBER. 9 7 4 8 9 7 8 8 1 2.!")
+            // .toString({ pretty: true });
 
-    },//Example of How to Send Card to Alexa Companion App : Tell Mode.
+            objSSMLBuilder.say("LET ME SEE.")
+                .pause('2s')
+                .say("THE MANAGER FOR HDFC " + city + " OFFICE IS MANOHAR. PLEASE NOTE DOWN HIS " + contact + " NUMBER!")
+                .sayAs({
+                    word: "9748978812",
+                    interpret: "telephone"
+                })
 
-    'CardTellIntent': function() {
-        var cardTitle = 'Card Title';
-        var cardContent = 'Card Summary Content';
-        this.attributes['speechOutput']="Speech Output Message";
-        this.attributes['repromptSpeech']="Are you there? This is the secondary waiting message prompt if you don't say anything or I don't here anything."
-        this.emit(':askWithCard',this.attributes['speechOutput'], this.attributes['repromptSpeech'], cardTitle, cardContent);
+            let speechOutput = objSSMLBuilder.ssml(true);
 
-    },//Example of How to Send Card to Alexa Companion App : Ask Mode.
+            console.log(JSON.stringify(response.say));
+            response.say(speechOutput);
+            // response.say("LET ME SEE. THE MANAGER FOR HDFC " + city + " OFFICE IS MANOHAR. PLEASE NOTE DOWN HIS " + contact + " NUMBER. 9 7 4 8 9 7 8 8 1 2.!")
+            //     .reprompt("You there?");
+        }
+    }
+);
 
-    'AMAZON.HelpIntent': function () {
-        this.attributes['speechOutput']="You can just ask me stuff, don\'t sweat it."
-       this.attributes['repromptSpeech']="Are you there?"
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    },//Mandatory Block
+alexaApp.intent("welcomeIntent",
+    function (request, response) {
+        console.log(JSON.stringify(request));
+        // response.card({
+        //     type: "Standard",
+        //     title: "My Cool Card", // this is not required for type Simple or Standard
+        //     text: "Your ride is on the way to 123 Main Street!\nEstimated cost for this ride: $25",
+        //     image: { // image is optional
+        //       smallImageUrl: "https://carfu.com/resources/card-images/race-car-small.png", // required
+        //       largeImageUrl: "https://carfu.com/resources/card-images/race-car-large.png"
+        //     }
+        //   });
+        response.say("HELLO THERE. I AM AN HDFC ASSISTANT. YOU CAN ASK ME DETAILS ABOUT AN HDFC EMPLOYEE, YOUR PENDING SERVICE REQUESTS OR MAKING A NEW SERVICE REQUEST.!")
+            .reprompt("You there?");
+    }
+);
 
-    "AMAZON.StopIntent": function() {
-        this.emit(':tell', "Goodbye!");
-    },//Mandatory Block
+alexaApp.intent("newservicerequestIntent",
+    function (request, response) {
+        console.log(JSON.stringify(request));
+        response.say("OKAY! REGARDING WHAT?")
+            .reprompt("You there?");
+    }
+);
 
-    "AMAZON.CancelIntent": function() {
-        this.emit(':tell', "Goodbye!");
-    },//Mandatory Block
+alexaApp.intent("requesttypeIntent",
+    function (request, response) {
+        console.log(objRequestData);
+        console.log(JSON.stringify(request));
+        // console.log(JSON.stringify(request.slots));
+        if (request.slots.DesktopRequest == undefined) {
+            response.say("PLEASE TELL REGARDING WHAT YOU WANT TO MAKE A SERVICE REQUEST?")
+                .reprompt("You there?");
+        }
+        else {
+            objRequestData.RequestType = request.slots.DesktopRequest.value;
+            response.say("PLEASE TELL ME YOUR EMPLOYEE ID")
+                .reprompt("You there?");
+        }
+    }
+);
 
-    'SessionEndedRequest': function () {
-        console.log('session ended!');
-        //this.attributes['endedSessionCount'] += 1;
-        this.emit(":tell", "Goodbye!");
-    },//Mandatory Block
+alexaApp.intent("employeeIdIntent",
+    function (request, response) {
+        console.log(objRequestData);
+        console.log(JSON.stringify(request.slots));
+        if (request.slots.EmployeeId == undefined) {
+            response.say("PLEASE TELL ME YOUR EMPLOYEE ID")
+                .reprompt("You there?");
+        }
+        else if (objRequestData.RequestType == null || objRequestData.RequestType == '') {
+            response.say("PLEASE TELL REGARDING WHAT YOU WANT TO MAKE A SERVICE REQUEST?")
+                .reprompt("You there?");
+        }
+        else {
+            objRequestData.EmployeeId = request.slots.EmployeeId.value;
+            response.say("YOUR SERVICE REQUEST HAS BEEN RAISED FOR THE " + objRequestData.RequestType + " FOR THE NEW JOINEES UNDER EMPLOYEE ID " + objRequestData.EmployeeId)
+                .reprompt("You there?");
+        }
+    }
+);
 
-     'UnhandledIntent': function() {
-        console.log("UNHANDLED");
-        var message = 'I didn\'t get you. Try again';
-        this.emit(':ask', message, message);
-    },//Mandatory Block
+alexaApp.intent("pendingrequestIntent",
+    function (request, response) {
+        console.log(JSON.stringify(request));
+        console.log(JSON.stringify(request.slots));
+        response.say("YOU HAD RAISED THREE SERVICE REQUESTS YESTERDAY. THE ONE FOR A NEW DESKTOP ALLOCATION HAS BEEN APPROVED.")
+            .reprompt("You there?");
+    }
+);
 
-};
+console.log("Server Running at Port : " + port);
+app.listen(port);
+// Listening to port
