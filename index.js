@@ -124,13 +124,15 @@ alexaApp.intent("TrainTicketBook",
                             console.log('status code:' + resp.statusCode);
 
                             console.log('Inside data process');
+                            console.log(JSON.stringify(response));
                             calback(false, body, response);
                         }
                     });
                 }],
                 function (err, result, response) {
                     console.log('callback fn')
-                    console.log(result);
+                    console.log(JSON.stringify(result));
+                    console.log(JSON.stringify(response));
                     let ticketno = result[0];
                     console.log(ticketno);
                     objSSMLBuilder.say("LET ME SEE.")
