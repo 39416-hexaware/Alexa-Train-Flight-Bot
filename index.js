@@ -113,16 +113,17 @@ alexaApp.intent("TrainTicketBook",
                 json: true
             };
 
-            console.log('before async parallel');
-            //response.say("testing");
+            console.log('before async parallel');            
+            response.say("testing");
+            console.log(JSON.stringify(response));
             try{
-            callURI(options, response)
+            callURI(options)
             .then((res)=>{
                 console.log('result from promise 1',res);
                 console.log(JSON.stringify(response));
                 //response.resolved = false;
                 console.log(JSON.stringify(response));
-                //response.say("testing");
+                response.say("testing");
                 //response.send();
                 console.log('result after promise 2',res);
             }).catch(function(err){
@@ -148,7 +149,7 @@ alexaApp.intent("TrainTicketBook",
     }
 );
 
-function callURI(options, res){
+function callURI(options){
     return new Promise(function(resolve, reject){
         requestAPI(options, function (error, resp, body) {
             if (error) {
@@ -160,8 +161,7 @@ function callURI(options, res){
                 console.log('status code:' + resp.statusCode);
 
                 console.log('Inside data process');
-                let ticketno = body;
-                res.say('ts');
+                let ticketno = body;                
                 resolve(true);
                 console.log(ticketno);                
                 // objSSMLBuilder.say("LET ME SEE.")
