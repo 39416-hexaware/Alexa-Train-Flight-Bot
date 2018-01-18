@@ -117,9 +117,10 @@ alexaApp.intent("TrainTicketBook", function (request, response) {
             callURI(options)
             .then((res)=>{
                 console.log('result from promise 1',res);
-                console.log(JSON.stringify(response));
+                
                 //response.resolved = false;                
                 setTimeout(function() {
+                    console.log(JSON.stringify(response));
                     response.say("After timeout!");
                     response.send();
                   }, 1000);
