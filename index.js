@@ -76,43 +76,43 @@ alexaApp.intent("TrainTicketBook",
         objData.DateOfTravel = dateoftravel != undefined ? dateoftravel : "";
         objData.Tickets = passengers != undefined ? passengers : "";
 
-        async.parallel([
-            function (callback) {
-                if (boardingpoint === undefined || boardingpoint == '') {
-                    response.say("PLEASE TELL ME BOARDING POINT.!")
-                        .reprompt("You there?");
-                }
-                else if (destination === undefined || destination == '') {
-                    response.say("PLEASE TELL ME DESTINATION.!")
-                        .reprompt("You there?");
-                }
-                else if (dateoftravel === undefined || dateoftravel == '') {
-                    response.say("PLEASE TELL ME DATE OF TRAVEL.!")
-                        .reprompt("You there?");
-                }
-                else if (passengers === undefined || passengers == '') {
-                    response.say("PLEASE PROVIDE ME TOTAL NUMBER OF PASSENGERS.!")
-                        .reprompt("You there?");
-                }
-                else {
-                    var url = commonFiles.APIList['RailwayAPI']();
-                    var data = {
-                        "IntentName": objData.IntentName,
-                        "BoardingPoint": objData.BoardingPoint,
-                        "Destination": objData.Destination,
-                        "DateOfTravel": objData.DateOfTravel,
-                        "Tickets": objData.Tickets
-                    };
-                    console.log(data);
+        if (boardingpoint === undefined || boardingpoint == '') {
+            response.say("PLEASE TELL ME BOARDING POINT.!")
+                .reprompt("You there?");
+        }
+        else if (destination === undefined || destination == '') {
+            response.say("PLEASE TELL ME DESTINATION.!")
+                .reprompt("You there?");
+        }
+        else if (dateoftravel === undefined || dateoftravel == '') {
+            response.say("PLEASE TELL ME DATE OF TRAVEL.!")
+                .reprompt("You there?");
+        }
+        else if (passengers === undefined || passengers == '') {
+            response.say("PLEASE PROVIDE ME TOTAL NUMBER OF PASSENGERS.!")
+                .reprompt("You there?");
+        }
+        else {
+            var url = commonFiles.APIList['RailwayAPI']();
+            var data = {
+                "IntentName": objData.IntentName,
+                "BoardingPoint": objData.BoardingPoint,
+                "Destination": objData.Destination,
+                "DateOfTravel": objData.DateOfTravel,
+                "Tickets": objData.Tickets
+            };
+            console.log(data);
 
-                    var options = {
-                        url: url,
-                        method: 'POST',
-                        header: commonFiles.headerTemplate(),
-                        body: data,
-                        json: true
-                    };
+            var options = {
+                url: url,
+                method: 'POST',
+                header: commonFiles.headerTemplate(),
+                body: data,
+                json: true
+            };
 
+            async.parallel([
+                function (calback) {
                     requestAPI(options, function (error, resp, body) {
                         if (error) {
                             console.dir(error);
@@ -122,27 +122,27 @@ alexaApp.intent("TrainTicketBook",
                             console.log('status code:' + resp.statusCode);
 
                             console.log('Inside data process');
-                            callback(false, body);
+                            calback(false, body);
                         }
                     });
-                }
-            }],
-            function (err, result) {
-                console.log(result);
-                let ticketno = result[0];
-                console.log(ticketno);
-                objSSMLBuilder.say("LET ME SEE.")
-                    .pause('2s')
-                    .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
-                    .pause('2s')
-                    .say("Your ticket number is " + ticketno)
-                    .toString({ pretty: true });
+                }],
+                function (err, result) {
+                    console.log(result);
+                    let ticketno = result[0];
+                    console.log(ticketno);
+                    objSSMLBuilder.say("LET ME SEE.")
+                        .pause('2s')
+                        .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
+                        .pause('2s')
+                        .say("Your ticket number is " + ticketno)
+                        .toString({ pretty: true });
 
-                let speechOutput = objSSMLBuilder.ssml(true);
-                console.log(speechOutput);
+                    let speechOutput = objSSMLBuilder.ssml(true);
+                    console.log(speechOutput);
 
-                response.say(speechOutput);
-            });
+                    response.say(speechOutput);
+                });
+        }
     }
 );
 
