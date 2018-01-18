@@ -62,8 +62,7 @@ alexaApp.launch(function (request, response) {
 
 //   alexaApp.dictionary = { "names": ["matt", "joe", "bob", "bill", "mary", "jane", "dawn"] };
 
-alexaApp.intent("TrainTicketBook",
-    function (request, response) {
+alexaApp.intent("TrainTicketBook", function (request, response) {
         console.log('Mubash');
         console.log(JSON.stringify(response));
 
@@ -123,7 +122,7 @@ alexaApp.intent("TrainTicketBook",
                 console.log(JSON.stringify(response));
                 //response.resolved = false;
                 console.log(JSON.stringify(response));
-                response.say("testing");
+                response.say("testing").send();
                 //response.send();
                 console.log('result after promise 2',res);
             }).catch(function(err){
@@ -162,7 +161,7 @@ function callURI(options){
 
                 console.log('Inside data process');
                 let ticketno = body;                
-                resolve(true);
+                resolve(false);
                 console.log(ticketno);                
                 // objSSMLBuilder.say("LET ME SEE.")
                 //     .pause('2s')
