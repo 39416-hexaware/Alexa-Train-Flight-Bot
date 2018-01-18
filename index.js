@@ -119,9 +119,9 @@ alexaApp.intent("TrainTicketBook",
             callURI(options)
             .then((res)=>{
                 console.log('result from promise 1',res);
-                console.log(response);
+                console.log(JSON.stringify(response));
                 response.say("testing");
-                response.send();
+                //response.send();
                 console.log('result after promise 2',res);
             }).catch(function(err){
                 console.log('CATCH',err);
