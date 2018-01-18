@@ -112,29 +112,19 @@ alexaApp.intent("TrainTicketBook",
             };
 
             console.log('before async parallel');
-            var vari = '';
-            async.parallel([
-                function (calback, response) {
-                    requestAPI(options, function (error, resp, body, response) {
-                        if (error) {
-                            console.dir(error);
-                            return
-                        }
-                        else {
-                            console.log('API Success');
-                            console.log('status code:' + resp.statusCode);
+            
+            requestAPI(options, function (error, resp, body) {
+                if (error) {
+                    console.dir(error);
+                    return
+                }
+                else {
+                    console.log('API Success');
+                    console.log('status code:' + resp.statusCode);
 
-                            console.log('Inside data process');
-                            console.log(JSON.stringify(response));
-                            calback(false, body, response);
-                        }
-                    });
-                }],
-                function (err, result, response) {
-                    console.log('callback fn')
-                    console.log(JSON.stringify(result));
+                    console.log('Inside data process');
                     console.log(JSON.stringify(response));
-                    let ticketno = result[0];
+                    let ticketno = body[0];
                     console.log(ticketno);
                     objSSMLBuilder.say("LET ME SEE.")
                         .pause('2s')
@@ -144,14 +134,23 @@ alexaApp.intent("TrainTicketBook",
                         .toString({ pretty: true });
 
                     let speechOutput = objSSMLBuilder.ssml(true);
-                    console.log(speechOutput);
+                    response.say(speechOutput);
+                }
+            });
 
-                    var tst = {"resolved":false,"response":{"version":"1.0","response":{"directives":[],"shouldEndSession":true}},"sessionObject":{"details":{"sessionId":"SessionId.4f1b5079-ada2-4f58-ba38-8eb960f828d1","application":{"applicationId":"amzn1.ask.skill.acde21a6-a6a3-48f1-bf91-50c2d65c437f"},"attributes":{},"user":{"userId":"amzn1.ask.account.AEDFI5G2CN5OSZPO4WGMYYASOGUAPOEKTTJUEI2A7CGKJMBT7NRLX7JM7NXDZEAE3YASO3BTIONVQLHKT66CEAXZLNJX5UQTZLNVJ44EKP3HWTFA7PAAR6SQJB3OFI3LAATG2PSTPEQLEFRCMQW3V7GCICQZ6F6BIDWGCUE6FXI4PHVCJFRMW47HNS46XKID4CORS23R26MLDBA","accessToken":null},"new":false,"userId":"amzn1.ask.account.AEDFI5G2CN5OSZPO4WGMYYASOGUAPOEKTTJUEI2A7CGKJMBT7NRLX7JM7NXDZEAE3YASO3BTIONVQLHKT66CEAXZLNJX5UQTZLNVJ44EKP3HWTFA7PAAR6SQJB3OFI3LAATG2PSTPEQLEFRCMQW3V7GCICQZ6F6BIDWGCUE6FXI4PHVCJFRMW47HNS46XKID4CORS23R26MLDBA","accessToken":null},"attributes":{},"sessionId":"SessionId.4f1b5079-ada2-4f58-ba38-8eb960f828d1"}}
-                    vari = speechOutput;
-                });
-                if(vari != '')
-                    response.say(vari);
-                console.log('exit else');
+            // async.parallel([
+            //     function (calback) {
+
+            //     }],
+            //     function (err, result) {
+            //         console.log('callback fn')
+            //         console.log(JSON.stringify(result));
+            //         console.log(JSON.stringify(response));
+            //         let ticketno = result[0];
+            //         console.log(ticketno);
+
+            //         console.log(speechOutput);
+            //     });
         }
     }
 );
