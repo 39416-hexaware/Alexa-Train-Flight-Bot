@@ -79,6 +79,7 @@ alexaApp.intent("TrainTicketBook",
         async.parallel([
             function (firstfn) {
                 if (boardingpoint === undefined || boardingpoint == '') {
+                    console.log(response);
                     response.say("PLEASE TELL ME BOARDING POINT.!")
                         .reprompt("You there?");
                 }
@@ -132,7 +133,8 @@ alexaApp.intent("TrainTicketBook",
                 console.log(result);
                 let ticketno = result[0];
                 console.log(ticketno);
-                // response.say("SUCCESS.!")
+                console.log(response);
+                response.say("SUCCESS.!")
                 // objSSMLBuilder.say("LET ME SEE.")
                 //     .pause('2s')
                 //     .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
