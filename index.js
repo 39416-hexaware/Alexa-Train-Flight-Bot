@@ -150,7 +150,6 @@ function callURI(options){
                 console.log('status code:' + resp.statusCode);
 
                 console.log('Inside data process');
-                console.log(JSON.stringify(response));
                 let ticketno = body;
                 resolve(true);
                 console.log(ticketno);                
