@@ -61,7 +61,7 @@ alexaApp.launch(function (request, response) {
 //   alexaApp.dictionary = { "names": ["matt", "joe", "bob", "bill", "mary", "jane", "dawn"] };
 
 alexaApp.intent("TrainTicketBook",
-    function (request, response) {
+    function (request, response, callback) {
         console.log('Mubash');
         console.log(JSON.stringify(request));
 
@@ -76,7 +76,7 @@ alexaApp.intent("TrainTicketBook",
         objData.DateOfTravel = dateoftravel != undefined ? dateoftravel : "";
         objData.Tickets = passengers != undefined ? passengers : "";
 
-        async.parallel([
+        callback(async.parallel([
             function (callback) {
                 if (boardingpoint === undefined || boardingpoint == '') {
                     response.say("PLEASE TELL ME BOARDING POINT.!")
@@ -142,7 +142,7 @@ alexaApp.intent("TrainTicketBook",
                 console.log(speechOutput);
 
                 response.say(speechOutput);
-            });
+            }));
     }
 );
 
