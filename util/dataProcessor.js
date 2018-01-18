@@ -1,8 +1,9 @@
 var BookTrainData = function () {
-    var passengers = null;
-    var boardingpoint = null;
-    var destination = null;
-    var dateoftravel = null;
+    var IntentName = null;
+    var BoardingPoint = null;
+    var Destination = null;
+    var DateOfTravel = null;
+    var Tickets = null;
 };
 
 // var EmpDetailsData = function () {

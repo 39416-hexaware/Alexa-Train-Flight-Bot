@@ -5,6 +5,8 @@ var express = require('express');
 var Alexa = require('alexa-app');
 var SSML = require('ssml');
 var SSMLBuilder = require('ssml-builder');
+var async = require('async');
+var requestAPI = require('request');
 const data = require('./util/dataProcessor');
 
 var objData = new data.BookTrainData();
@@ -67,128 +69,72 @@ alexaApp.intent("TrainTicketBook",
         let destination = request.slots.destination.value;
         let dateoftravel = request.slots.dateoftravel.value;
 
-        objSSML.say("LET ME SEE.")
-            .break(200)
-            .prosody({ rate: '0.8' })
-            .say("COMING FROM TRAIN TICKET BOOK")
-            .toString({ pretty: true });
-
-        if (passengers == undefined) {
-            objData.passengers = passengers != undefined ? passengers : "";
-            response.say("PLEASE PROVIDE NAME OF THE CITY.!")
+        objData.IntentName = "TrainIntent.BookTicket";
+        objData.BoardingPoint = boardingpoint != undefined ? boardingpoint : "";
+        objData.Destination = destination != undefined ? destination : "";
+        objData.DateOfTravel = dateoftravel != undefined ? dateoftravel : "";
+        objData.Tickets = passengers != undefined ? passengers : "";            
+        
+        if (boardingpoint === undefined || boardingpoint == '') {            
+            response.say("PLEASE TELL ME BOARDING POINT.!")
                 .reprompt("You there?");
         }
-        else if (boardingpoint == undefined) {
-            objData.boardingpoint = boardingpoint != undefined ? boardingpoint : "";
-            response.say("PLEASE TELL ME WHAT DETAIL YOU WANT.!")
+        else if (destination === undefined || destination == '') {            
+            response.say("PLEASE TELL ME DESTINATION.!")
                 .reprompt("You there?");
         }
-        else if (destination == undefined) {
-            objData.destination = destination != undefined ? destination : "";
-            response.say("PLEASE TELL ME WHAT DETAIL YOU WANT.!")
+        else if (dateoftravel === undefined || dateoftravel == '') {            
+            response.say("PLEASE TELL ME DATE OF TRAVEL.!")
                 .reprompt("You there?");
         }
-        else if (dateoftravel == undefined) {
-            objData.dateoftravel = dateoftravel != undefined ? dateoftravel : "";
-            response.say("PLEASE TELL ME WHAT DETAIL YOU WANT.!")
+        else if (passengers === undefined || passengers == '') {            
+            response.say("PLEASE PROVIDE ME TOTAL NUMBER OF PASSENGERS.!")
                 .reprompt("You there?");
         }
         else {
-            objEmployeeDetails.Contact = contact;
-            objEmployeeDetails.City = city;
-
-            // objSSML.say("LET ME SEE.")
-            // .break(200)
-            // .prosody({ rate: '0.8' })
-            // .say("THE MANAGER FOR HDFC "+ city +" OFFICE IS MANOHAR. PLEASE NOTE DOWN HIS "+ contact +" NUMBER. 9 7 4 8 9 7 8 8 1 2.!")
-            // .toString({ pretty: true });
-
-            objSSMLBuilder.say("LET ME SEE.")
-                .pause('2s')
-                .say("THE MANAGER FOR HDFC " + city + " OFFICE IS MANOHAR. PLEASE NOTE DOWN HIS " + contact + " NUMBER!")
-                .sayAs({
-                    word: "9748978812",
-                    interpret: "telephone"
-                })
-
-            let speechOutput = objSSMLBuilder.ssml(true);
-
-            console.log(JSON.stringify(response.say));
-            response.say(speechOutput);
-            // response.say("LET ME SEE. THE MANAGER FOR HDFC " + city + " OFFICE IS MANOHAR. PLEASE NOTE DOWN HIS " + contact + " NUMBER. 9 7 4 8 9 7 8 8 1 2.!")
-            //     .reprompt("You there?");
+            async.parallel([
+                function (firstfn) {
+                    var url = commonFiles.APIList['RailwayAPI']();
+                    var data = JSON.parse(objData);
+            
+                    var options = {
+                        url: url,
+                        method: 'POST',
+                        header: commonFiles.headerTemplate(),
+                        body: data,
+                        json: true
+                    };
+            
+                    requestAPI(options, function (error, resp, body) {
+                        if (error) {
+                            console.dir(error);
+                            return
+                        }
+                        else {
+                            console.log('status code:' + resp.statusCode);
+            
+                            console.log('Inside data process');
+                            firstfn(false, body);
+                        }
+                    });
+                }],
+                function (err, result) {
+                    let ticketno = result[0];
+                    objSSML.say("LET ME SEE.")
+                    .break(200)
+                    .prosody({ rate: '0.8' })
+                    .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
+                    .break(200)
+                    .prosody({ rate: '0.8' })
+                    .say("Your ticket number is " + ticketno)
+                    .toString({ pretty: true });
+        
+                    let speechOutput = objSSMLBuilder.ssml(true);
+        
+                    console.log(JSON.stringify(response.say));
+                    response.say(speechOutput); 
+                });            
         }
-    }
-);
-
-alexaApp.intent("welcomeIntent",
-    function (request, response) {
-        console.log(JSON.stringify(request));
-        // response.card({
-        //     type: "Standard",
-        //     title: "My Cool Card", // this is not required for type Simple or Standard
-        //     text: "Your ride is on the way to 123 Main Street!\nEstimated cost for this ride: $25",
-        //     image: { // image is optional
-        //       smallImageUrl: "https://carfu.com/resources/card-images/race-car-small.png", // required
-        //       largeImageUrl: "https://carfu.com/resources/card-images/race-car-large.png"
-        //     }
-        //   });
-        response.say("HELLO THERE. I AM AN HDFC ASSISTANT. YOU CAN ASK ME DETAILS ABOUT AN HDFC EMPLOYEE, YOUR PENDING SERVICE REQUESTS OR MAKING A NEW SERVICE REQUEST.!")
-            .reprompt("You there?");
-    }
-);
-
-alexaApp.intent("newservicerequestIntent",
-    function (request, response) {
-        console.log(JSON.stringify(request));
-        response.say("OKAY! REGARDING WHAT?")
-            .reprompt("You there?");
-    }
-);
-
-alexaApp.intent("requesttypeIntent",
-    function (request, response) {
-        console.log(objRequestData);
-        console.log(JSON.stringify(request));
-        // console.log(JSON.stringify(request.slots));
-        if (request.slots.DesktopRequest == undefined) {
-            response.say("PLEASE TELL REGARDING WHAT YOU WANT TO MAKE A SERVICE REQUEST?")
-                .reprompt("You there?");
-        }
-        else {
-            objRequestData.RequestType = request.slots.DesktopRequest.value;
-            response.say("PLEASE TELL ME YOUR EMPLOYEE ID")
-                .reprompt("You there?");
-        }
-    }
-);
-
-alexaApp.intent("employeeIdIntent",
-    function (request, response) {
-        console.log(objRequestData);
-        console.log(JSON.stringify(request.slots));
-        if (request.slots.EmployeeId == undefined) {
-            response.say("PLEASE TELL ME YOUR EMPLOYEE ID")
-                .reprompt("You there?");
-        }
-        else if (objRequestData.RequestType == null || objRequestData.RequestType == '') {
-            response.say("PLEASE TELL REGARDING WHAT YOU WANT TO MAKE A SERVICE REQUEST?")
-                .reprompt("You there?");
-        }
-        else {
-            objRequestData.EmployeeId = request.slots.EmployeeId.value;
-            response.say("YOUR SERVICE REQUEST HAS BEEN RAISED FOR THE " + objRequestData.RequestType + " FOR THE NEW JOINEES UNDER EMPLOYEE ID " + objRequestData.EmployeeId)
-                .reprompt("You there?");
-        }
-    }
-);
-
-alexaApp.intent("pendingrequestIntent",
-    function (request, response) {
-        console.log(JSON.stringify(request));
-        console.log(JSON.stringify(request.slots));
-        response.say("YOU HAD RAISED THREE SERVICE REQUESTS YESTERDAY. THE ONE FOR A NEW DESKTOP ALLOCATION HAS BEEN APPROVED.")
-            .reprompt("You there?");
     }
 );
 
