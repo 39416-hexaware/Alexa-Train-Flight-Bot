@@ -120,7 +120,7 @@ alexaApp.intent("TrainTicketBook", function (request, response) {
                 
                 //response.resolved = false;                
                 setTimeout(function() {
-                    console.log(JSON.stringify(response),'hari');
+                    console.log(JSON.stringify(response));
                     response.say("After timeout!");
                     response.send();
                   }, 1000);
