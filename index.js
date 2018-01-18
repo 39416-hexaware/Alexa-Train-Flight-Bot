@@ -7,6 +7,7 @@ var SSML = require('ssml');
 var SSMLBuilder = require('ssml-builder');
 var async = require('async');
 var requestAPI = require('request');
+var commonFiles = require('./util/commonFiles');
 const data = require('./util/dataProcessor');
 
 var objData = new data.BookTrainData();
