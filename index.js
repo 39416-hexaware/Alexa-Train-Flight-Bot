@@ -77,7 +77,7 @@ alexaApp.intent("TrainTicketBook",
         objData.Tickets = passengers != undefined ? passengers : "";
 
         async.parallel([
-            function (firstfn, callback) {
+            function (callback) {
                 if (boardingpoint === undefined || boardingpoint == '') {
                     response.say("PLEASE TELL ME BOARDING POINT.!")
                         .reprompt("You there?");
@@ -122,7 +122,7 @@ alexaApp.intent("TrainTicketBook",
                             console.log('status code:' + resp.statusCode);
 
                             console.log('Inside data process');
-                            callback(firstfn(false, body));
+                            callback(false, body);
                         }
                     });
                 }
