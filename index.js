@@ -111,6 +111,7 @@ alexaApp.intent("TrainTicketBook",
                 json: true
             };
 
+            console.log('before async parallel');
             async.parallel([
                 function (calback) {
                     requestAPI(options, function (error, resp, body) {
@@ -119,6 +120,7 @@ alexaApp.intent("TrainTicketBook",
                             return
                         }
                         else {
+                            console.log('API Success');
                             console.log('status code:' + resp.statusCode);
 
                             console.log('Inside data process');
@@ -127,6 +129,7 @@ alexaApp.intent("TrainTicketBook",
                     });
                 }],
                 function (err, result) {
+                    console.log('callback fn')
                     console.log(result);
                     let ticketno = result[0];
                     console.log(ticketno);
@@ -142,6 +145,8 @@ alexaApp.intent("TrainTicketBook",
 
                     response.say(speechOutput);
                 });
+
+                console.log('exit else');
         }
     }
 );
