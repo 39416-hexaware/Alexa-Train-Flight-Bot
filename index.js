@@ -128,6 +128,8 @@ alexaApp.intent("TrainTicketBook",
                 }],
                 function (err, result) {
                     console.log(result);
+                    console.log(request);
+                    console.log(response);
                     let ticketno = result[0];
                     objSSML.say("LET ME SEE.")
                     .break(200)
