@@ -126,15 +126,17 @@ alexaApp.intent("TrainTicketBook",
                     console.log(JSON.stringify(response));
                     let ticketno = body[0];
                     console.log(ticketno);
-                    objSSMLBuilder.say("LET ME SEE.")
-                        .pause('2s')
-                        .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
-                        .pause('2s')
-                        .say("Your ticket number is " + ticketno)
-                        .toString({ pretty: true });
+                    response.say("PLEASE TELL ME DATE OF TRAVEL.!")
+                    .reprompt("You there?");
+                    // objSSMLBuilder.say("LET ME SEE.")
+                    //     .pause('2s')
+                    //     .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
+                    //     .pause('2s')
+                    //     .say("Your ticket number is " + ticketno)
+                    //     .toString({ pretty: true });
 
-                    let speechOutput = objSSMLBuilder.ssml(true);
-                    response.say(speechOutput);
+                    // let speechOutput = objSSMLBuilder.ssml(true);
+                    // response.say(speechOutput);
                 }
             });
 
