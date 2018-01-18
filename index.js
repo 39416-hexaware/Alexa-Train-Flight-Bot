@@ -113,7 +113,7 @@ alexaApp.intent("TrainTicketBook",
 
             console.log('before async parallel');
             async.parallel([
-                function (calback) {
+                function (calback, response) {
                     requestAPI(options, function (error, resp, body) {
                         if (error) {
                             console.dir(error);
