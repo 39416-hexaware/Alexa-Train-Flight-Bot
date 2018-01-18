@@ -112,33 +112,13 @@ alexaApp.intent("TrainTicketBook",
             };
 
             console.log('before async parallel');
+            callURI(options)
+            .then(function(res){
+                response.say("testing")
+            }).catch(function(err){
+
+            })
             
-            requestAPI(options, function (error, resp, body) {
-                if (error) {
-                    console.dir(error);
-                    return
-                }
-                else {
-                    console.log('API Success');
-                    console.log('status code:' + resp.statusCode);
-
-                    console.log('Inside data process');
-                    console.log(JSON.stringify(response));
-                    let ticketno = body[0];
-                    console.log(ticketno);
-                    response.say("PLEASE TELL ME DATE OF TRAVEL.!")
-                    .reprompt("You there?");
-                    // objSSMLBuilder.say("LET ME SEE.")
-                    //     .pause('2s')
-                    //     .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
-                    //     .pause('2s')
-                    //     .say("Your ticket number is " + ticketno)
-                    //     .toString({ pretty: true });
-
-                    // let speechOutput = objSSMLBuilder.ssml(true);
-                    // response.say(speechOutput);
-                }
-            });
 
             // async.parallel([
             //     function (calback) {
@@ -157,6 +137,36 @@ alexaApp.intent("TrainTicketBook",
         console.log(JSON.stringify(response));
     }
 );
+
+function callURI(options){
+    return new Promise(function(resolve, reject){
+        requestAPI(options, function (error, resp, body) {
+            if (error) {
+                console.dir(error);
+                reject(false);    
+            }
+            else {
+                console.log('API Success');
+                console.log('status code:' + resp.statusCode);
+
+                console.log('Inside data process');
+                console.log(JSON.stringify(response));
+                let ticketno = body;
+                resolve(true);
+                console.log(ticketno);                
+                // objSSMLBuilder.say("LET ME SEE.")
+                //     .pause('2s')
+                //     .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
+                //     .pause('2s')
+                //     .say("Your ticket number is " + ticketno)
+                //     .toString({ pretty: true });
+
+                // let speechOutput = objSSMLBuilder.ssml(true);
+                // response.say(speechOutput);
+            }
+        });
+    })
+}
 
 console.log("Server Running at Port : " + port);
 app.listen(port);
