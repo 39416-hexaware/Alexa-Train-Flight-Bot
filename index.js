@@ -112,15 +112,17 @@ alexaApp.intent("TrainTicketBook",
             };
 
             console.log('before async parallel');
+
+            try{
             callURI(options)
             .then(function(res){
-                console.log('result from promise ',res);
+                console.log('result from promise 1',res);
                 response.say("testing");
-                console.log('result after promise ',res);
+                console.log('result after promise 2',res);
             }).catch(function(err){
-
+                console.log(err);
             })
-            
+        }catch(err){console.log(err);}
 
             // async.parallel([
             //     function (calback) {
