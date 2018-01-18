@@ -113,12 +113,8 @@ alexaApp.intent("TrainTicketBook",
                         json: true
                     };
 
-                    objSSMLBuilder.say("LET ME SEE.")
-                    .pause('2s')
-                    .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
-                    .pause('2s')
-                    .say("Your ticket number is ")
-                    .toString({ pretty: true });
+                    response.say("SUCCESS!")
+                    .reprompt("You there?");
 
                     requestAPI(options, function (error, resp, body) {
                         if (error) {
