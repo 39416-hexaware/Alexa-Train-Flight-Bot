@@ -115,7 +115,7 @@ alexaApp.intent("TrainTicketBook",
             };
 
             console.log('before async parallel');
-
+            response.say("testing");
             try{
             callURI(options)
             .then((res)=>{
@@ -125,7 +125,7 @@ alexaApp.intent("TrainTicketBook",
                 response.send();
                 console.log('result after promise 2',res);
             }).catch(function(err){
-                console.log(err);
+                console.log('CATCH',err);
             })
         }catch(err){console.log(err);}
 
@@ -150,6 +150,7 @@ alexaApp.intent("TrainTicketBook",
 function callURI(options){
     return new Promise(function(resolve, reject){
         requestAPI(options, function (error, resp, body) {
+            console.log('EXT RES', error, resp, body);
             if (error) {
                 console.dir(error);
                 reject(false);    
