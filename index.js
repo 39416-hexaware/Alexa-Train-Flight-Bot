@@ -120,6 +120,7 @@ alexaApp.intent("TrainTicketBook",
                     });
                 }],
                 function (err, result) {
+                    console.log(result);
                     let ticketno = result[0];
                     objSSML.say("LET ME SEE.")
                     .break(200)
