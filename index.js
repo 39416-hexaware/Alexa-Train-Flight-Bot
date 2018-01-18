@@ -154,6 +154,7 @@ alexaApp.intent("TrainTicketBook",
             //         console.log(speechOutput);
             //     });
         }
+        console.log(JSON.stringify(response));
     }
 );
 
