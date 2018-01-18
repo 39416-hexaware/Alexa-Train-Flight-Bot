@@ -79,7 +79,6 @@ alexaApp.intent("TrainTicketBook",
         async.parallel([
             function (firstfn) {
                 if (boardingpoint === undefined || boardingpoint == '') {
-                    console.log(response);
                     response.say("PLEASE TELL ME BOARDING POINT.!")
                         .reprompt("You there?");
                 }
@@ -114,6 +113,13 @@ alexaApp.intent("TrainTicketBook",
                         json: true
                     };
 
+                    objSSMLBuilder.say("LET ME SEE.")
+                    .pause('2s')
+                    .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
+                    .pause('2s')
+                    .say("Your ticket number is ")
+                    .toString({ pretty: true });
+
                     requestAPI(options, function (error, resp, body) {
                         if (error) {
                             console.dir(error);
@@ -123,7 +129,6 @@ alexaApp.intent("TrainTicketBook",
                             console.log('status code:' + resp.statusCode);
 
                             console.log('Inside data process');
-                            response.say("SUCCESS.!")
                             firstfn(false, body);
                         }
                     });
@@ -133,19 +138,17 @@ alexaApp.intent("TrainTicketBook",
                 console.log(result);
                 let ticketno = result[0];
                 console.log(ticketno);
-                console.log(response);
-                response.say("SUCCESS.!")
-                // objSSMLBuilder.say("LET ME SEE.")
-                //     .pause('2s')
-                //     .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
-                //     .pause('2s')
-                //     .say("Your ticket number is " + ticketno)
-                //     .toString({ pretty: true });
+                objSSMLBuilder.say("LET ME SEE.")
+                    .pause('2s')
+                    .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
+                    .pause('2s')
+                    .say("Your ticket number is " + ticketno)
+                    .toString({ pretty: true });
 
-                // let speechOutput = objSSMLBuilder.ssml(true);
-                // console.log(speechOutput);
+                let speechOutput = objSSMLBuilder.ssml(true);
+                console.log(speechOutput);
 
-                // response.say(speechOutput);
+                response.say(speechOutput);
             });
     }
 );
