@@ -114,12 +114,17 @@ alexaApp.intent("TrainTicketBook", function (request, response) {
 
             console.log('before async parallel');                                    
             try{
+            response.say('testing');    
             callURI(options)
             .then((res)=>{
                 console.log('result from promise 1',res);
                 console.log(JSON.stringify(response));
                 //response.resolved = false;                
-                response.say("testing").send();
+                setTimeout(function() {
+                    response.say("After timeout!");
+                    response.send();
+                  }, 1000);
+                //response.say("testing").send();
                 return false;
                 //response.send();
                 console.log('result after promise 2',res);
