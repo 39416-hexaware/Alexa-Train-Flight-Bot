@@ -122,6 +122,7 @@ alexaApp.intent("TrainTicketBook",
                             console.log('status code:' + resp.statusCode);
 
                             console.log('Inside data process');
+                            response.say("SUCCESS.!")
                             firstfn(false, body);
                         }
                     });
@@ -131,7 +132,7 @@ alexaApp.intent("TrainTicketBook",
                 console.log(result);
                 let ticketno = result[0];
                 console.log(ticketno);
-                response.say("SUCCESS.!")
+                // response.say("SUCCESS.!")
                 // objSSMLBuilder.say("LET ME SEE.")
                 //     .pause('2s')
                 //     .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
