@@ -140,7 +140,6 @@ alexaApp.intent("TrainTicketBook",
                     let speechOutput = objSSMLBuilder.ssml(true);
                     console.log(speechOutput);
         
-                    console.log(JSON.stringify(response.say));
                     response.say(speechOutput); 
                 });            
         }
