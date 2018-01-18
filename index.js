@@ -96,8 +96,7 @@ alexaApp.intent("TrainTicketBook",
             async.parallel([
                 function (firstfn) {
                     var url = commonFiles.APIList['RailwayAPI']();
-                    console.log(JSON.stringify(objData));
-                    var data = JSON.parse(objData);
+                    var data = JSON.stringify(objData);
             
                     var options = {
                         url: url,
