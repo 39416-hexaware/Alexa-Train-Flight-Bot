@@ -74,7 +74,7 @@ alexaApp.intent("TrainTicketBook",
         objData.BoardingPoint = boardingpoint != undefined ? boardingpoint : "";
         objData.Destination = destination != undefined ? destination : "";
         objData.DateOfTravel = dateoftravel != undefined ? dateoftravel : "";
-        objData.Tickets = passengers != undefined ? passengers : "";            
+        objData.Tickets = passengers != undefined ? parseInt(passengers) : "";            
         
         if (boardingpoint === undefined || boardingpoint == '') {            
             response.say("PLEASE TELL ME BOARDING POINT.!")
