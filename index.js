@@ -1,3 +1,5 @@
+import { read } from 'fs';
+
 'use strict';
 
 //imports
@@ -77,6 +79,7 @@ alexaApp.intent("TrainTicketBook",
         objData.Tickets = passengers != undefined ? passengers : "";
         response.say("dddd").shouldEndSession(false);
         if (boardingpoint === undefined || boardingpoint == '') {
+            console.log('TEST ',JSON.stringify(response));
             response.say("PLEASE TELL ME BOARDING POINT.!")
                 .reprompt("You there?");
         }
@@ -88,7 +91,7 @@ alexaApp.intent("TrainTicketBook",
             response.say("PLEASE TELL ME DATE OF TRAVEL.!")
                 .reprompt("You there?");
         }
-        else if (passengers === undefined || passengers == '') {
+        else if (passengers === undefined || passengers == '') {            
             response.say("PLEASE PROVIDE ME TOTAL NUMBER OF PASSENGERS.!")
                 .reprompt("You there?");
         }
