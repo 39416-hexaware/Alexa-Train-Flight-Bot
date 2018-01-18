@@ -75,7 +75,7 @@ alexaApp.intent("TrainTicketBook",
         objData.Destination = destination != undefined ? destination : "";
         objData.DateOfTravel = dateoftravel != undefined ? dateoftravel : "";
         objData.Tickets = passengers != undefined ? passengers : "";
-
+        var rs = response;
         if (boardingpoint === undefined || boardingpoint == '') {
             response.say("PLEASE TELL ME BOARDING POINT.!")
                 .reprompt("You there?");
@@ -117,7 +117,7 @@ alexaApp.intent("TrainTicketBook",
             callURI(options)
             .then(function(res){
                 console.log('result from promise 1',res);
-                response.say("testing");
+                rs.say("testing");
                 console.log('result after promise 2',res);
             }).catch(function(err){
                 console.log(err);
