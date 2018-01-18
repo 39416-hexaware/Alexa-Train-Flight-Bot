@@ -74,7 +74,7 @@ alexaApp.intent("TrainTicketBook",
         objData.BoardingPoint = boardingpoint != undefined ? boardingpoint : "";
         objData.Destination = destination != undefined ? destination : "";
         objData.DateOfTravel = dateoftravel != undefined ? dateoftravel : "";
-        objData.Tickets = passengers != undefined ? parseInt(passengers) : "";            
+        objData.Tickets = passengers != undefined ? passengers : "";            
         
         if (boardingpoint === undefined || boardingpoint == '') {            
             response.say("PLEASE TELL ME BOARDING POINT.!")
@@ -95,8 +95,14 @@ alexaApp.intent("TrainTicketBook",
         else {
             async.parallel([
                 function (firstfn) {
-                    var url = commonFiles.APIList['RailwayAPI']();
-                    var data = JSON.stringify(objData);
+                    var url = commonFiles.APIList['RailwayAPI']();   
+                    var data = {
+                        "IntentName": objData.IntentName,
+                        "BoardingPoint": objData.BoardingPoint,
+                        "Destination": objData.Destination,
+                        "DateOfTravel": objData.DateOfTravel,
+                        "Tickets": objData.Tickets
+                    };
                     console.log(data);
             
                     var options = {
