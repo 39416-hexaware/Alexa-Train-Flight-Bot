@@ -63,7 +63,7 @@ alexaApp.launch(function (request, response) {
 alexaApp.intent("TrainTicketBook",
     function (request, response) {
         console.log('Mubash');
-        console.log(JSON.stringify(request));
+        console.log(JSON.stringify(response));
 
         let passengers = request.slots.passengers.value;
         let boardingpoint = request.slots.boardingpoint.value;
