@@ -12,6 +12,12 @@ var StationDetails = function () {
     var TrainNumber = null;
 };
 
+var TrainRouteDetails = function () {
+    var IntentName = null;
+    var TrainNumber = null;
+};
+
 
 module.exports.BookTrainData = BookTrainData;
 module.exports.StationDetails = StationDetails;
+module.exports.TrainRouteDetails = TrainRouteDetails;

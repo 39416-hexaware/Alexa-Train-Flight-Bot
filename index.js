@@ -10,6 +10,7 @@ const data = require('./util/dataProcessor');
 
 var objData = new data.BookTrainData();
 var objStationData = new data.StationDetails();
+var objTrainRouteData = new data.TrainRouteDetails();
 var objEmployeeDetails = null;
 var objRequestData = null;
 
@@ -186,8 +187,8 @@ alexaApp.intent("CheckTrainRouteIntent", function (request, response) {
 
     let trainNumber = request.slots.trainnumber.value;
 
-    objStationData.IntentName = "TrainIntent.GetStationCode";
-    objStationData.TrainNumber = trainNumber != undefined ? trainNumber : "";
+    objTrainRouteData.IntentName = "TrainIntent.GetStationCode";
+    objTrainRouteData.TrainNumber = trainNumber != undefined ? trainNumber : "";
 
     if (trainNumber === undefined || trainNumber == '') {
         response.say("PLEASE PROVIDE ME YOUR TRAIN NUMBER")
@@ -196,8 +197,8 @@ alexaApp.intent("CheckTrainRouteIntent", function (request, response) {
     else {
         var url = commonFiles.APIList['RailwayAPI']();
         var data = {
-            "IntentName": objStationData.IntentName,
-            "TrainNumber": objStationData.TrainNumber,
+            "IntentName": objTrainRouteData.IntentName,
+            "TrainNumber": objTrainRouteData.TrainNumber,
         };
         console.log(data);
 
