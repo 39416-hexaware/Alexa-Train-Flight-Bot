@@ -319,9 +319,7 @@ function callURI(options, requestType) {
                         
                         console.log(codes);
                         resolve(codes);
-                    }
-                    
-                    resolve(ticketno);
+                    }                
                 }
                 else if (requestType == "CheckTrainRouteIntent") {
                     console.log(body[0]);
@@ -334,7 +332,6 @@ function callURI(options, requestType) {
                         console.log(routes);
                         resolve(routes);
                     }
-                    resolve(ticketno);
                 }
                 else if (requestType == "CancelledTrainIntent") {
                     console.log(body[0]);
@@ -346,7 +343,6 @@ function callURI(options, requestType) {
                         console.log(trains);
                         resolve(trains);
                     }
-                    resolve(ticketno);
                 }
             }
         });
