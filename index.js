@@ -337,7 +337,7 @@ function callURI(options, requestType) {
                     console.log(body[0]);
                     if (body[0].total.length > 0) {
                         let trains = '';
-                        for (let i = 0; i < body[0].total.length; i++) {
+                        for (let i = 0; i < 10; i++) {
                             trains += body[0].trains[i].name + ', ';
                         }
                         console.log(trains);
