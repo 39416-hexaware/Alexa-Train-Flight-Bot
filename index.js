@@ -8,11 +8,11 @@ var requestAPI = require('request');
 var commonFiles = require('./util/commonFiles');
 const data = require('./util/dataProcessor');
 
+//Objects
 var objData = new data.BookTrainData();
 var objStationData = new data.StationDetails();
 var objTrainRouteData = new data.TrainRouteDetails();
-var objEmployeeDetails = null;
-var objRequestData = null;
+var objCancelledTrainData = new data.CancelledRouteDetails();
 
 var port = process.env.PORT || 5000;
 //Assign port
@@ -236,6 +236,60 @@ alexaApp.intent("CheckTrainRouteIntent", function (request, response) {
     }
 });
 
+alexaApp.intent("CancelledTrainIntent", function (request, response) {
+    console.log(JSON.stringify(response));
+
+    let cancelDate = request.slots.canceldate.value;
+
+    objCancelledTrainData.IntentName = "TrainIntent.CancelIntent";
+    objCancelledTrainData.CancelledDate = cancelDate != undefined ? cancelDate : "";
+
+    if (cancelDate === undefined || cancelDate == '') {
+        response.say("PLEASE PROVIDE ME THE DATE")
+            .reprompt("You there?");
+    }
+    else {
+        var url = commonFiles.APIList['RailwayAPI']();
+        var data = {
+            "IntentName": objCancelledTrainData.IntentName,
+            "CancelledDate": objCancelledTrainData.CancelledDate,
+        };
+        console.log(data);
+
+        var options = {
+            url: url,
+            method: 'POST',
+            header: commonFiles.headerTemplate(),
+            body: data,
+            json: true
+        };
+
+        try {
+            return callURI(options, "CancelledTrainIntent")
+                .then((res) => {
+                    console.log(res);
+                    objSSMLBuilder.say("LET ME SEE.")
+                        .pause('2s')
+                        say("THE TRAIN NUMBER" + trainNumber + " TRAVELS THROUGH")
+                        .sayAs({
+                            word: res,
+                            interpret: "address"
+                        })
+
+                    let speechOutput = objSSMLBuilder.ssml(true);
+
+                    console.log(JSON.stringify(response.say));
+                    response.say(speechOutput);
+                }).catch(function (err) {
+                    console.log('CATCH', err);
+                });
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+});
+
 function callURI(options, requestType) {
     return new Promise(function (resolve, reject) {
         requestAPI(options, function (error, resp, body) {
@@ -275,7 +329,20 @@ function callURI(options, requestType) {
                         for (let i = 0; i < body[0].route.length; i++) {
                             routes += body[0].route[i].station.name + ', ';
                         }
-                        resolve(codes);
+                        resolve(routes);
+                    }
+                    let ticketno = body;
+                    console.log(ticketno);
+                    resolve(ticketno);
+                }
+                else if (requestType == "CancelledTrainIntent") {
+                    console.log(body[0]);
+                    if (body[0].route.length > 0) {
+                        let trains = '';
+                        for (let i = 0; i < body[0].total.length; i++) {
+                            trains += body[0].trains[i].name + ', ';
+                        }
+                        resolve(trains);
                     }
                     let ticketno = body;
                     console.log(ticketno);

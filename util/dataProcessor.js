@@ -17,7 +17,12 @@ var TrainRouteDetails = function () {
     var TrainNumber = null;
 };
 
+var CancelledRouteDetails = function () {
+    var IntentName = null;
+    var CancelledDate = null;
+};
 
 module.exports.BookTrainData = BookTrainData;
 module.exports.StationDetails = StationDetails;
 module.exports.TrainRouteDetails = TrainRouteDetails;
+module.exports.CancelledRouteDetails = CancelledRouteDetails;
