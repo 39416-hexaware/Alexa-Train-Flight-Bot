@@ -334,7 +334,7 @@ function callURI(options, requestType) {
                     }
                 }
                 else if (requestType == "CancelledTrainIntent") {
-                    // console.log(body[0]);
+                    console.log(body[0]);
                     if (body[0].total.length > 0) {
                         console.log('before timeout');
                         let trains = '';
