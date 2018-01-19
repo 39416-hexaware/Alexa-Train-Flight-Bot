@@ -5,14 +5,14 @@
 //imports
 var express = require('express');
 var Alexa = require('alexa-app');
-var SSML = require('ssml');
+// var SSML = require('ssml');
 var SSMLBuilder = require('ssml-builder');
-var async = require('async');
 var requestAPI = require('request');
 var commonFiles = require('./util/commonFiles');
 const data = require('./util/dataProcessor');
 
 var objData = new data.BookTrainData();
+var objStationData = new data.StationDetails();
 var objEmployeeDetails = null;
 var objRequestData = null;
 
@@ -60,120 +60,163 @@ alexaApp.launch(function (request, response) {
         .reprompt("You there?");
 });
 
-//   alexaApp.dictionary = { "names": ["matt", "joe", "bob", "bill", "mary", "jane", "dawn"] };
-
 alexaApp.intent("TrainTicketBook", function (request, response) {
-        console.log('Mubash');
-        console.log(JSON.stringify(response));
+    console.log(JSON.stringify(response));
 
-        let passengers = request.slots.passengers.value;
-        let boardingpoint = request.slots.boardingpoint.value;
-        let destination = request.slots.destination.value;
-        let dateoftravel = request.slots.dateoftravel.value;
+    let passengers = request.slots.passengers.value;
+    let boardingpoint = request.slots.boardingpoint.value;
+    let destination = request.slots.destination.value;
+    let dateoftravel = request.slots.dateoftravel.value;
 
-        objData.IntentName = "TrainIntent.BookTicket";
-        objData.BoardingPoint = boardingpoint != undefined ? boardingpoint : "";
-        objData.Destination = destination != undefined ? destination : "";
-        objData.DateOfTravel = dateoftravel != undefined ? dateoftravel : "";
-        objData.Tickets = passengers != undefined ? passengers : "";
-        // response.say("dddd").shouldEndSession(false);
-        if (boardingpoint === undefined || boardingpoint == '') {
-            response.say("PLEASE TELL ME BOARDING POINT.!")
-                .reprompt("You there?");
-        }
-        else if (destination === undefined || destination == '') {
-            response.say("PLEASE TELL ME DESTINATION.!")
-                .reprompt("You there?");
-        }
-        else if (dateoftravel === undefined || dateoftravel == '') {
-            response.say("PLEASE TELL ME DATE OF TRAVEL.!")
-                .reprompt("You there?");
-        }
-        else if (passengers === undefined || passengers == '') {            
-            response.say("PLEASE PROVIDE ME TOTAL NUMBER OF PASSENGERS.!")
-                .reprompt("You there?");
-        }
-        else {
-            var url = commonFiles.APIList['RailwayAPI']();
-            var data = {
-                "IntentName": objData.IntentName,
-                "BoardingPoint": objData.BoardingPoint,
-                "Destination": objData.Destination,
-                "DateOfTravel": objData.DateOfTravel,
-                "Tickets": objData.Tickets
-            };
-            console.log(data);
+    objData.IntentName = "TrainIntent.BookTicket";
+    objData.BoardingPoint = boardingpoint != undefined ? boardingpoint : "";
+    objData.Destination = destination != undefined ? destination : "";
+    objData.DateOfTravel = dateoftravel != undefined ? dateoftravel : "";
+    objData.Tickets = passengers != undefined ? passengers : "";
 
-            var options = {
-                url: url,
-                method: 'POST',
-                header: commonFiles.headerTemplate(),
-                body: data,
-                json: true
-            };
+    if (boardingpoint === undefined || boardingpoint == '') {
+        response.say("PLEASE TELL ME BOARDING POINT.!")
+            .reprompt("You there?");
+    }
+    else if (destination === undefined || destination == '') {
+        response.say("PLEASE TELL ME DESTINATION.!")
+            .reprompt("You there?");
+    }
+    else if (dateoftravel === undefined || dateoftravel == '') {
+        response.say("PLEASE TELL ME DATE OF TRAVEL.!")
+            .reprompt("You there?");
+    }
+    else if (passengers === undefined || passengers == '') {
+        response.say("PLEASE PROVIDE ME TOTAL NUMBER OF PASSENGERS.!")
+            .reprompt("You there?");
+    }
+    else {
+        var url = commonFiles.APIList['RailwayAPI']();
+        var data = {
+            "IntentName": objData.IntentName,
+            "BoardingPoint": objData.BoardingPoint,
+            "Destination": objData.Destination,
+            "DateOfTravel": objData.DateOfTravel,
+            "Tickets": objData.Tickets
+        };
+        console.log(data);
 
-            console.log('before async parallel');                                    
-            try{            
-            return callURI(options)
-            .then((ticketno)=>{
-                    console.log(JSON.stringify(ticketno));
+        var options = {
+            url: url,
+            method: 'POST',
+            header: commonFiles.headerTemplate(),
+            body: data,
+            json: true
+        };
 
+        try {
+            return callURI(options, "TrainTicketBook")
+                .then((res) => {
                     objSSMLBuilder.say("LET ME SEE.")
-                    .pause('2s')
-                    .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
-                    .pause('2s')
-                    .say("Your ticket number is " + ticketno)
-        
+                        .pause('2s')
+                        .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
+                        .pause('2s')
+                        .say("Your ticket number is " + res)
+
                     let speechOutput = objSSMLBuilder.ssml(true);
-        
+
                     console.log(JSON.stringify(response.say));
-                    response.say(speechOutput); 
-            }).catch(function(err){
-                console.log('CATCH',err);
-            })
-        }catch(err){console.log(err);}
-
-            // async.parallel([
-            //     function (calback) {
-
-            //     }],
-            //     function (err, result) {
-            //         console.log('callback fn')
-            //         console.log(JSON.stringify(result));
-            //         console.log(JSON.stringify(response));
-            //         let ticketno = result[0];
-            //         console.log(ticketno);
-
-            //         console.log(speechOutput);
-            //     });
+                    response.say(speechOutput);
+                }).catch(function (err) {
+                    console.log('CATCH', err);
+                });
+        }
+        catch (err) {
+            console.log(err);
         }
     }
-);
+});
 
-function callURI(options){
-    return new Promise(function(resolve, reject){
+alexaApp.intent("StationCodeIntent", function (request, response) {
+    console.log(JSON.stringify(response));
+
+    let stationName = request.slots.stationname.value;
+
+    objStationData.IntentName = "TrainIntent.GetStationCode";
+    objStationData.StationName = stationName != undefined ? stationName : "";
+
+    if (stationName === undefined || stationName == '') {
+        response.say("PLEASE PROVIDE ME YOUR STATION NAME")
+            .reprompt("You there?");
+    }
+    else {
+        var url = commonFiles.APIList['RailwayAPI']();
+        var data = {
+            "IntentName": objStationData.IntentName,
+            "StationName": objStationData.StationName,
+        };
+        console.log(data);
+
+        var options = {
+            url: url,
+            method: 'POST',
+            header: commonFiles.headerTemplate(),
+            body: data,
+            json: true
+        };
+
+        try {
+            return callURI(options, "StationCodeIntent")
+                .then((res) => {
+                    console.log(res);
+                    objSSMLBuilder.say("LET ME SEE.")
+                        .pause('2s')
+                        .sayAs({
+                            word: res,
+                            interpret: "address"
+                        })
+
+                    let speechOutput = objSSMLBuilder.ssml(true);
+
+                    console.log(JSON.stringify(response.say));
+                    response.say(speechOutput);
+                }).catch(function (err) {
+                    console.log('CATCH', err);
+                });
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+});
+
+function callURI(options, requestType) {
+    return new Promise(function (resolve, reject) {
         requestAPI(options, function (error, resp, body) {
             if (error) {
                 console.dir(error);
-                reject(false);    
+                reject(false);
             }
             else {
                 console.log('API Success');
                 console.log('status code:' + resp.statusCode);
 
                 console.log('Inside data process');
-                let ticketno = body;                
-                resolve(ticketno);
-                console.log(ticketno);                
-                // objSSMLBuilder.say("LET ME SEE.")
-                //     .pause('2s')
-                //     .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
-                //     .pause('2s')
-                //     .say("Your ticket number is " + ticketno)
-                //     .toString({ pretty: true });
+                console.log(body);
 
-                // let speechOutput = objSSMLBuilder.ssml(true);
-                // response.say(speechOutput);
+                if (requestType == "TrainTicketBook") {
+                    let ticketno = body;
+                    console.log(ticketno);
+                    resolve(ticketno);
+                }
+                else if (requestType == "StationCodeIntent") {
+                    console.log(body[0][0]);
+                    if (body[0][0].stations.length > 0) {
+                        let codes = '';
+                        for (let i = 0; i < body[0][0].stations.length; i++) {
+                            codes += body[0][0].stations[i].code + ' - ' + body[0][0].stations[i].name + ', ';
+                        }
+                        resolve(codes);
+                    }
+                    let ticketno = body;
+                    console.log(ticketno);
+                    resolve(ticketno);
+                }
             }
         });
     })

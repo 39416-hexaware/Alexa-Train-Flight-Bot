@@ -6,11 +6,11 @@ var BookTrainData = function () {
     var Tickets = null;
 };
 
-// var EmpDetailsData = function () {
-//     var Contact = null;
-//     var City = null;
-// };
+var StationDetails = function () {
+    var IntentName = null;
+    var StationName = null;
+};
 
 
 module.exports.BookTrainData = BookTrainData;
-// module.exports.EmployeeDetails = EmpDetailsData;
+module.exports.StationDetails = StationDetails;
