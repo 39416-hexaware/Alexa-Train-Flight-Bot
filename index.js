@@ -205,7 +205,7 @@ function callURI(options, requestType) {
                     if (body[0].stations.length > 0) {
                         let codes = '';
                         for (let i = 0; i < body[0].stations.length; i++) {
-                            codes += body[0].stations[i].code + ' - ' + body[0].stations[i].name + ', ';
+                            codes += body[0].stations[i].code + ' IS FOR ' + body[0].stations[i].name + ', ';
                         }
                         resolve(codes);
                     }
