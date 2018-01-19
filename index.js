@@ -335,7 +335,7 @@ function callURI(options, requestType) {
                 }
                 else if (requestType == "CancelledTrainIntent") {
                     console.log(body[0]);
-                    if (body[0].route.length > 0) {
+                    if (body[0].total.length > 0) {
                         let trains = '';
                         for (let i = 0; i < body[0].total.length; i++) {
                             trains += body[0].trains[i].name + ', ';
