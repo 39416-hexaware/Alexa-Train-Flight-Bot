@@ -118,14 +118,11 @@ alexaApp.intent("TrainTicketBook", function (request, response) {
             .then((ticketno)=>{
                     console.log(JSON.stringify(ticketno));
 
-                    objSSML.say("LET ME SEE.")
-                    .break(200)
-                    .prosody({ rate: '0.8' })
+                    objSSMLBuilder.say("LET ME SEE.")
+                    .pause('2s')
                     .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
-                    .break(200)
-                    .prosody({ rate: '0.8' })
+                    .pause('2s')
                     .say("Your ticket number is " + ticketno)
-                    .toString({ pretty: true });
         
                     let speechOutput = objSSMLBuilder.ssml(true);
         
