@@ -270,7 +270,7 @@ alexaApp.intent("CancelledTrainIntent", function (request, response) {
                     console.log(res);
                     objSSMLBuilder.say("LET ME SEE.")
                         .pause('2s')
-                        say("THE TRAIN NUMBER" + trainNumber + " TRAVELS THROUGH")
+                        .say("THE CANCELLED TRAINS FOR " + cancelDate)
                         .sayAs({
                             word: res,
                             interpret: "address"
