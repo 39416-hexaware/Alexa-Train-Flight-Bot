@@ -115,20 +115,22 @@ alexaApp.intent("TrainTicketBook", function (request, response) {
             console.log('before async parallel');                                    
             try{            
             return callURI(options)
-            .then((res)=>{
-                console.log('result from promise 1',res);
-                
-                //response.resolved = false;                
-                
-                    console.log(JSON.stringify(response));
+            .then((ticketno)=>{
+                    console.log(JSON.stringify(res));
 
-                    response.say("SUCCESS.!")
-                    .reprompt("You there?");
-                
-                //response.say("testing").send();
-                return false;
-                //response.send();
-                console.log('result after promise 2',res);
+                    objSSML.say("LET ME SEE.")
+                    .break(200)
+                    .prosody({ rate: '0.8' })
+                    .say("Train ticket booking for " + passengers + " members is successful from " + boardingpoint + " to " + destination + " on " + dateoftravel)
+                    .break(200)
+                    .prosody({ rate: '0.8' })
+                    .say("Your ticket number is " + ticketno)
+                    .toString({ pretty: true });
+        
+                    let speechOutput = objSSMLBuilder.ssml(true);
+        
+                    console.log(JSON.stringify(response.say));
+                    response.say(speechOutput); 
             }).catch(function(err){
                 console.log('CATCH',err);
             })
@@ -148,7 +150,6 @@ alexaApp.intent("TrainTicketBook", function (request, response) {
             //         console.log(speechOutput);
             //     });
         }
-        console.log(JSON.stringify(response));
     }
 );
 
@@ -165,7 +166,7 @@ function callURI(options){
 
                 console.log('Inside data process');
                 let ticketno = body;                
-                resolve(false);
+                resolve(ticketno);
                 console.log(ticketno);                
                 // objSSMLBuilder.say("LET ME SEE.")
                 //     .pause('2s')
