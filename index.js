@@ -302,7 +302,6 @@ function callURI(options, requestType) {
                 console.log('status code:' + resp.statusCode);
 
                 console.log('Inside data process');
-                console.log(body);
 
                 if (requestType == "TrainTicketBook") {
                     let ticketno = body;
@@ -334,12 +333,14 @@ function callURI(options, requestType) {
                     }
                 }
                 else if (requestType == "CancelledTrainIntent") {
-                    console.log(body[0]);
+                    // console.log(body[0]);
                     if (body[0].total.length > 0) {
+                        console.log('before timeout');
                         let trains = '';
                         for (let i = 0; i < 10; i++) {
                             trains += body[0].trains[i].name + ', ';
                         }
+                        console.log('after timeout');
                         console.log(trains);
                         resolve(trains);
                     }
