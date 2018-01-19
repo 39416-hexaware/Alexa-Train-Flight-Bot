@@ -1,11 +1,8 @@
-// import { read } from 'fs';
-
 'use strict';
 
 //imports
 var express = require('express');
 var Alexa = require('alexa-app');
-// var SSML = require('ssml');
 var SSMLBuilder = require('ssml-builder');
 var requestAPI = require('request');
 var commonFiles = require('./util/commonFiles');
@@ -23,7 +20,6 @@ var app = express();
 //Create express object
 
 var alexaApp = new Alexa.app("Alexa-Train-Flight-Bot");
-var objSSML = new SSML();
 var objSSMLBuilder = new SSMLBuilder();
 
 alexaApp.express({
