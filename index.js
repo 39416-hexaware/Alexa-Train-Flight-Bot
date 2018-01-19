@@ -201,11 +201,11 @@ function callURI(options, requestType) {
                     resolve(ticketno);
                 }
                 else if (requestType == "StationCodeIntent") {
-                    console.log(body[0][0]);
-                    if (body[0][0].stations.length > 0) {
+                    console.log(body[0]);
+                    if (body[0].stations.length > 0) {
                         let codes = '';
-                        for (let i = 0; i < body[0][0].stations.length; i++) {
-                            codes += body[0][0].stations[i].code + ' - ' + body[0][0].stations[i].name + ', ';
+                        for (let i = 0; i < body[0].stations.length; i++) {
+                            codes += body[0].stations[i].code + ' - ' + body[0].stations[i].name + ', ';
                         }
                         resolve(codes);
                     }
