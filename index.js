@@ -252,7 +252,7 @@ alexaApp.intent("CancelledTrainIntent", function (request, response) {
         var url = commonFiles.APIList['RailwayAPI']();
         var data = {
             "IntentName": objCancelledTrainData.IntentName,
-            "CancelledDate": objCancelledTrainData.CancelledDate,
+            "CancelledDate": commonFiles.dateFormatter(objCancelledTrainData.CancelledDate.toString()),
         };
         console.log(data);
 

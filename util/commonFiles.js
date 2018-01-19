@@ -22,4 +22,13 @@ var APIList = {
     }    
 };
 
+var dateFormatter = function (strdate) {
+    let objDate = strdate.split('-');
+
+    console.log(objDate);
+    let finalDate = objDate[2].toString() + '-' + objDate[1].toString() + '-' + objDate[0].toString();
+    return finalDate;
+}
+
 module.exports.APIList = APIList;
+module.exports.dateFormatter = dateFormatter;
