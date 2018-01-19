@@ -9,6 +9,7 @@ var BookTrainData = function () {
 var StationDetails = function () {
     var IntentName = null;
     var StationName = null;
+    var TrainNumber = null;
 };
 
 

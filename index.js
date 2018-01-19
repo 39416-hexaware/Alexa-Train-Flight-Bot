@@ -181,6 +181,60 @@ alexaApp.intent("StationCodeIntent", function (request, response) {
     }
 });
 
+alexaApp.intent("CheckTrainRouteIntent", function (request, response) {
+    console.log(JSON.stringify(response));
+
+    let trainNumber = request.slots.trainnumber.value;
+
+    objStationData.IntentName = "TrainIntent.GetStationCode";
+    objStationData.TrainNumber = trainNumber != undefined ? trainNumber : "";
+
+    if (trainNumber === undefined || trainNumber == '') {
+        response.say("PLEASE PROVIDE ME YOUR TRAIN NUMBER")
+            .reprompt("You there?");
+    }
+    else {
+        var url = commonFiles.APIList['RailwayAPI']();
+        var data = {
+            "IntentName": objStationData.IntentName,
+            "TrainNumber": objStationData.TrainNumber,
+        };
+        console.log(data);
+
+        var options = {
+            url: url,
+            method: 'POST',
+            header: commonFiles.headerTemplate(),
+            body: data,
+            json: true
+        };
+
+        try {
+            return callURI(options, "CheckTrainRouteIntent")
+                .then((res) => {
+                    console.log(res);
+                    objSSMLBuilder.say("LET ME SEE.")
+                        .pause('2s')
+                        say("THE TRAIN NUMBER" + trainNumber + " TRAVELS THROUGH")
+                        .sayAs({
+                            word: res,
+                            interpret: "address"
+                        })
+
+                    let speechOutput = objSSMLBuilder.ssml(true);
+
+                    console.log(JSON.stringify(response.say));
+                    response.say(speechOutput);
+                }).catch(function (err) {
+                    console.log('CATCH', err);
+                });
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+});
+
 function callURI(options, requestType) {
     return new Promise(function (resolve, reject) {
         requestAPI(options, function (error, resp, body) {
@@ -206,6 +260,19 @@ function callURI(options, requestType) {
                         let codes = '';
                         for (let i = 0; i < body[0].stations.length; i++) {
                             codes += body[0].stations[i].code + ' IS FOR ' + body[0].stations[i].name + ', ';
+                        }
+                        resolve(codes);
+                    }
+                    let ticketno = body;
+                    console.log(ticketno);
+                    resolve(ticketno);
+                }
+                else if (requestType == "CheckTrainRouteIntent") {
+                    console.log(body[0]);
+                    if (body[0].route.length > 0) {
+                        let routes = '';
+                        for (let i = 0; i < body[0].route.length; i++) {
+                            routes += body[0].route[i].station.name + ', ';
                         }
                         resolve(codes);
                     }
