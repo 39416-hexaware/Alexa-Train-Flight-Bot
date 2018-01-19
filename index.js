@@ -121,7 +121,9 @@ alexaApp.intent("TrainTicketBook", function (request, response) {
                 //response.resolved = false;                
                 
                     console.log(JSON.stringify(response));
-                    response.say("After timeout!");
+
+                    response.say("SUCCESS.!")
+                    .reprompt("You there?");
                 
                 //response.say("testing").send();
                 return false;
