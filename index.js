@@ -187,7 +187,7 @@ alexaApp.intent("CheckTrainRouteIntent", function (request, response) {
 
     let trainNumber = request.slots.trainnumber.value;
 
-    objTrainRouteData.IntentName = "TrainIntent.GetStationCode";
+    objTrainRouteData.IntentName = "TrainIntent.TrainRoute";
     objTrainRouteData.TrainNumber = trainNumber != undefined ? trainNumber : "";
 
     if (trainNumber === undefined || trainNumber == '') {
