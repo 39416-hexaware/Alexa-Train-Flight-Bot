@@ -216,7 +216,7 @@ alexaApp.intent("CheckTrainRouteIntent", function (request, response) {
                     console.log(res);
                     objSSMLBuilder.say("LET ME SEE.")
                         .pause('2s')
-                        say("THE TRAIN NUMBER" + trainNumber + " TRAVELS THROUGH")
+                        .say("THE TRAIN NUMBER" + trainNumber + " TRAVELS THROUGH")
                         .sayAs({
                             word: res,
                             interpret: "address"
@@ -316,10 +316,11 @@ function callURI(options, requestType) {
                         for (let i = 0; i < body[0].stations.length; i++) {
                             codes += body[0].stations[i].code + ' IS FOR ' + body[0].stations[i].name + ', ';
                         }
+                        
+                        console.log(codes);
                         resolve(codes);
                     }
-                    let ticketno = body;
-                    console.log(ticketno);
+                    
                     resolve(ticketno);
                 }
                 else if (requestType == "CheckTrainRouteIntent") {
@@ -329,10 +330,10 @@ function callURI(options, requestType) {
                         for (let i = 0; i < body[0].route.length; i++) {
                             routes += body[0].route[i].station.name + ', ';
                         }
+                        
+                        console.log(routes);
                         resolve(routes);
                     }
-                    let ticketno = body;
-                    console.log(ticketno);
                     resolve(ticketno);
                 }
                 else if (requestType == "CancelledTrainIntent") {
@@ -342,10 +343,9 @@ function callURI(options, requestType) {
                         for (let i = 0; i < body[0].total.length; i++) {
                             trains += body[0].trains[i].name + ', ';
                         }
+                        console.log(trains);
                         resolve(trains);
                     }
-                    let ticketno = body;
-                    console.log(ticketno);
                     resolve(ticketno);
                 }
             }
