@@ -302,6 +302,7 @@ function callURI(options, requestType) {
                 console.log('status code:' + resp.statusCode);
 
                 console.log('Inside data process');
+                console.log(requestType)
 
                 if (requestType == "TrainTicketBook") {
                     let ticketno = body;
