@@ -270,7 +270,7 @@ alexaApp.intent("CancelledTrainIntent", function (request, response) {
                     console.log(res);
                     objSSMLBuilder.say("LET ME SEE.")
                         .pause('2s')
-                        .say("THE CANCELLED TRAINS FOR " + cancelDate)
+                        .say("THE CANCELLED TRAINS FOR " + cancelDate + " ARE")
                         .sayAs({
                             word: res,
                             interpret: "address"
@@ -278,7 +278,6 @@ alexaApp.intent("CancelledTrainIntent", function (request, response) {
 
                     let speechOutput = objSSMLBuilder.ssml(true);
 
-                    console.log(JSON.stringify(response.say));
                     response.say(speechOutput);
                 }).catch(function (err) {
                     console.log('CATCH', err);
@@ -339,7 +338,7 @@ function callURI(options, requestType) {
                         console.log('before timeout');
                         let trains = '';
                         for (let i = 0; i < 10; i++) {
-                            trains += body[0].trains[i].name + ', ';
+                            trains += body[0].trains[i].name + ' FROM' + body[0].trains[i].source.name + ' TO ' + body[0].trains[i].dest.name;
                         }
                         console.log('after timeout');
                         console.log(trains);
@@ -348,7 +347,7 @@ function callURI(options, requestType) {
                 }
             }
         });
-    })
+    });
 }
 
 console.log("Server Running at Port : " + port);
