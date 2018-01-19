@@ -116,7 +116,7 @@ alexaApp.intent("TrainTicketBook", function (request, response) {
             try{            
             return callURI(options)
             .then((ticketno)=>{
-                    console.log(JSON.stringify(res));
+                    console.log(JSON.stringify(ticketno));
 
                     objSSML.say("LET ME SEE.")
                     .break(200)
