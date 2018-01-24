@@ -13,6 +13,7 @@ var objData = new data.BookTrainData();
 var objStationData = new data.StationDetails();
 var objTrainRouteData = new data.TrainRouteDetails();
 var objCancelledTrainData = new data.CancelledRouteDetails();
+var objPNRStatus = new data.CancelledRouteDetails();
 
 var port = process.env.PORT || 5000;
 //Assign port
@@ -289,6 +290,60 @@ alexaApp.intent("CancelledTrainIntent", function (request, response) {
     }
 });
 
+alexaApp.intent("PNRStatusIntent", function (request, response) {
+    console.log(JSON.stringify(response));
+
+    let pnrNumber = request.slots.pnrnumber.value;
+
+    objPNRStatus.IntentName = "TrainIntent.PNRStatus";
+    objPNRStatus.PNRNumber = pnrNumber != undefined ? pnrNumber : "";
+
+    if (pnrNumber === undefined || pnrNumber == '') {
+        response.say("PLEASE PROVIDE ME YOUR TRAIN NUMBER")
+            .reprompt("You there?");
+    }
+    else {
+        var url = commonFiles.APIList['RailwayAPI']();
+        var data = {
+            "IntentName": objPNRStatus.IntentName,
+            "PNRNumber": objPNRStatus.PNRNumber,
+        };
+        console.log(data);
+
+        var options = {
+            url: url,
+            method: 'POST',
+            header: commonFiles.headerTemplate(),
+            body: data,
+            json: true
+        };
+
+        try {
+            return callURI(options, "PNRStatusIntent")
+                .then((res) => {
+                    console.log(res);
+                    objSSMLBuilder.say("LET ME SEE.")
+                        .pause('2s')
+                        .say("PNR STATUS FOR " + pnrNumber + " IS ")
+                        .sayAs({
+                            word: res,
+                            interpret: "address"
+                        })
+
+                    let speechOutput = objSSMLBuilder.ssml(true);
+
+                    console.log(JSON.stringify(response.say));
+                    response.say(speechOutput);
+                }).catch(function (err) {
+                    console.log('CATCH', err);
+                });
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+});
+
 function callURI(options, requestType) {
     return new Promise(function (resolve, reject) {
         requestAPI(options, function (error, resp, body) {
@@ -338,11 +393,19 @@ function callURI(options, requestType) {
                         console.log('before timeout');
                         let trains = '';
                         for (let i = 0; i < 10; i++) {
-                            trains += body[0].trains[i].name + ' FROM' + body[0].trains[i].source.name + ' TO ' + body[0].trains[i].dest.name;
+                            trains += body[0].trains[i].name + ' FROM ' + body[0].trains[i].source.name + ' TO ' + body[0].trains[i].dest.name;
                         }
                         console.log('after timeout');
                         console.log(trains);
                         resolve(trains);
+                    }
+                }
+                else if (requestType == "PNRStatusIntent") {
+                    console.log(JSON.stringify(body[0]));
+                    if (body[0].total > 0) {
+                        let pnrstatus = 'THE TRAIN ' + body[0].train.name + ' - ' + body[0].train.number + ' FROM ' + body[0].boarding_point.name + ' TO ' + body[0].to_station.name + " IS SCHEDULED FOR " + body[0].total_passengers + " PASSENGER(S) ON " + body[0].doj;
+                        console.log(pnrstatus);
+                        resolve(pnrstatus);
                     }
                 }
             }

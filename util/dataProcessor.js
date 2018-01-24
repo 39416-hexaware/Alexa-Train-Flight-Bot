@@ -22,7 +22,13 @@ var CancelledRouteDetails = function () {
     var CancelledDate = null;
 };
 
+var PNRDetails = function () {
+    var IntentName = null;
+    var PNRNumber = null;
+};
+
 module.exports.BookTrainData = BookTrainData;
 module.exports.StationDetails = StationDetails;
 module.exports.TrainRouteDetails = TrainRouteDetails;
 module.exports.CancelledRouteDetails = CancelledRouteDetails;
+module.exports.PNRDetails = PNRDetails;
