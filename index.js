@@ -299,7 +299,7 @@ alexaApp.intent("PNRStatusIntent", function (request, response) {
     objPNRStatus.PNRNumber = pnrNumber != undefined ? pnrNumber : "";
 
     if (pnrNumber === undefined || pnrNumber == '') {
-        response.say("PLEASE PROVIDE ME YOUR TRAIN NUMBER")
+        response.say("PLEASE PROVIDE ME YOUR PNR NUMBER")
             .reprompt("You there?");
     }
     else {
